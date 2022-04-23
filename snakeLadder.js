@@ -2,6 +2,13 @@ const throwDice = function () {
   return Math.ceil(Math.random() * 6);
 };
 
+const createPlayer = function (playerName) {
+  return {
+    name: playerName,
+    tile: 0
+  };
+};
+
 const movePlayer = function (player, tile) {
   return { name: player.name, tile: tile };
 };
@@ -49,30 +56,29 @@ const startGame = function (game) {
   }
 };
 
-const game = {
-  board: {
-    snakes: {
-      '14': 4,
-      '10': 2
-    },
-    ladders: {
-      '3': 9,
-      '8': 15
-    },
-    boardSize: 16
-  },
-  players: [
-    {
-      name: 'john',
-      tile: 0
-    },
-    {
-      name: 'hemant',
-      tile: 0
+const initGame = function (playerNames) {
+  const game = {
+    board: {
+      snakes: {
+        '14': 4,
+        '10': 2
+      },
+      ladders: {
+        '3': 9,
+        '8': 15
+      },
+      boardSize: 16
     }
-  ]
-}
-console.log(startGame(game).name, 'won!');
-console.log(game);
+  }
+  const players = playerNames.map(createPlayer);
+  game['players'] = players;
+  return game;
+};
 
-// todo : change the name of the function playMove()
+const main = function () {
+  const game = initGame(['john', 'hemant', 'kushal']);
+  console.log(startGame(game).name, 'won!');
+  console.log(game);
+};
+
+main();
