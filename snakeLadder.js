@@ -1,4 +1,4 @@
-const throwDice = function () {
+const rollDice = function () {
   return Math.ceil(Math.random() * 6);
 };
 
@@ -28,9 +28,13 @@ const nextTile = function (currentTile, board) {
 };
 
 const playMove = function (player, board) {
-  const diceValue = throwDice();
+  const diceValue = rollDice();
   const newTile = player.tile + diceValue;
-  return { newTile: nextTile(newTile, board) };
+  let finalTile = nextTile(newTile, board);
+  if (newTile > board.boardSize) {
+    finalTile = player.tile;
+  }
+  return { diceValue: diceValue, newTile: finalTile };
 };
 
 const getPlayer = function (players, moves) {
@@ -43,18 +47,31 @@ const updatePlayer = function (player, move) {
   return player;
 };
 
+const copyObj = function (object) {
+  const newObject = {};
+  for (const key in object) {
+    newObject[key] = object[key];
+  }
+  return newObject;
+};
+
 const playGame = function (game) {
   const board = game.board;
   const players = game.players;
-
+  const gameStats = [];
   let moves = 0;
   let currentPlayer;
   do {
     currentPlayer = getPlayer(players, moves);
-    updatePlayer(currentPlayer, playMove(currentPlayer, board));
+    const move = playMove(currentPlayer, board)
+    gameStats.push({ player: copyObj(currentPlayer), stats: move });
+    updatePlayer(currentPlayer, move);
     moves += 1;
   } while (isGameOn(currentPlayer, board));
-  return currentPlayer;
+  return {
+    winner: currentPlayer,
+    gameStats: gameStats
+  };
 };
 
 const createPlayer = function (playerName) {
@@ -64,29 +81,35 @@ const createPlayer = function (playerName) {
   };
 };
 
-const initGame = function (gameStats) {
+const initGame = function (playerNames) {
   const game = {
     board: {
       snakes: {
         '14': 4,
-        '10': 1
+        '10': 1,
+        '55': 19,
+        '99': 54,
+        '76': 29,
       },
       ladders: {
         '2': 10,
-        '8': 15
+        '8': 15,
+        '20': 44,
+        '49': 95,
+        '81': 90
       },
       boardSize: 16
     }
   }
-  const players = gameStats.players.map(createPlayer);
+  const players = playerNames.map(createPlayer);
   game['players'] = players;
   return game;
 };
 
 const main = function () {
-  const game = initGame({ players: ['john', 'hemant', 'kushal'] });
-  console.log(playGame(game).name, 'won!');
-  console.log(game);
+  const game = initGame(['john', 'hemant']);
+  const gameResult = playGame(game);
+  console.log(gameResult.gameStats, '\n', gameResult.winner);
 };
 
 main();
