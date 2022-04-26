@@ -28,7 +28,10 @@ const ladderOn = function (tile, ladders) {
 const nextTile = function (currentTile, board) {
   const snakeTail = snakeOn(currentTile, board.snakes);
   const ladderTop = ladderOn(currentTile, board.ladders);
-  return snakeTail || ladderTop || currentTile;
+  if (snakeTail === undefined && ladderTop === undefined) {
+    return currentTile;
+  }
+  return nextTile(snakeTail || ladderTop || currentTile, board);
 };
 
 const playMove = function (player, board) {
@@ -61,10 +64,10 @@ const initGame = function (gameStats) {
     board: {
       snakes: {
         '14': 4,
-        '10': 2
+        '10': 1
       },
       ladders: {
-        '3': 9,
+        '2': 10,
         '8': 15
       },
       boardSize: 16
