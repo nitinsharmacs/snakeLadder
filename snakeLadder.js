@@ -2,19 +2,12 @@ const throwDice = function () {
   return Math.ceil(Math.random() * 6);
 };
 
-const createPlayer = function (playerName) {
-  return {
-    name: playerName,
-    tile: 0
-  };
-};
-
 const movePlayer = function (player, tile) {
   return { name: player.name, tile: tile };
 };
 
-const isGameOver = function (player, board) {
-  return player.tile >= board.boardSize;
+const isGameOn = function (player, board) {
+  return player.tile < board.boardSize;
 };
 
 const snakeOn = function (tile, snakes) {
@@ -37,26 +30,38 @@ const nextTile = function (currentTile, board) {
 const playMove = function (player, board) {
   const diceValue = throwDice();
   const newTile = player.tile + diceValue;
-  return movePlayer(player, nextTile(newTile, board));
+  return { newTile: nextTile(newTile, board) };
 };
 
-const startGame = function (game) {
+const getPlayer = function (players, moves) {
+  const currentPlayerIndex = moves % players.length;
+  return players[currentPlayerIndex];
+};
+
+const updatePlayer = function (player, move) {
+  player.tile = move.newTile;
+  return player;
+};
+
+const playGame = function (game) {
   const board = game.board;
   const players = game.players;
+
   let moves = 0;
-
-  while (true) {
-    const currentPlayerIndex = moves % players.length;
-    let currentPlayer = players[currentPlayerIndex];
-
-    currentPlayer = playMove(currentPlayer, board);
-    players[currentPlayerIndex] = currentPlayer;
-
-    if (isGameOver(currentPlayer, board)) {
-      return currentPlayer;
-    }
+  let currentPlayer;
+  do {
+    currentPlayer = getPlayer(players, moves);
+    updatePlayer(currentPlayer, playMove(currentPlayer, board));
     moves += 1;
-  }
+  } while (isGameOn(currentPlayer, board));
+  return currentPlayer;
+};
+
+const createPlayer = function (playerName) {
+  return {
+    name: playerName,
+    tile: 0
+  };
 };
 
 const initGame = function (gameStats) {
@@ -80,7 +85,7 @@ const initGame = function (gameStats) {
 
 const main = function () {
   const game = initGame({ players: ['john', 'hemant', 'kushal'] });
-  console.log(startGame(game).name, 'won!');
+  console.log(playGame(game).name, 'won!');
   console.log(game);
 };
 
