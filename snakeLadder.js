@@ -18,13 +18,13 @@ const ladderOn = function (tile, ladders) {
   return ladders[tile];
 };
 
-const nextTile = function (currentTile, board) {
-  const snakeTail = snakeOn(currentTile, board.snakes);
-  const ladderTop = ladderOn(currentTile, board.ladders);
+const nextTile = function (tile, board) {
+  const snakeTail = snakeOn(tile, board.snakes);
+  const ladderTop = ladderOn(tile, board.ladders);
   if (snakeTail === undefined && ladderTop === undefined) {
-    return currentTile;
+    return tile;
   }
-  return nextTile(snakeTail || ladderTop || currentTile, board);
+  return nextTile(snakeTail || ladderTop || tile, board);
 };
 
 const playMove = function (player, board) {
@@ -64,7 +64,7 @@ const playGame = function (game) {
   do {
     currentPlayer = getPlayer(players, moves);
     const move = playMove(currentPlayer, board)
-    gameStats.push({ player: copyObj(currentPlayer), stats: move });
+    gameStats.push({ player: copyObj(currentPlayer), move: move });
     updatePlayer(currentPlayer, move);
     moves += 1;
   } while (isGameOn(currentPlayer, board));
