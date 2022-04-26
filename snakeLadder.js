@@ -56,7 +56,7 @@ const startGame = function (game) {
   }
 };
 
-const initGame = function (playerNames) {
+const initGame = function (gameStats) {
   const game = {
     board: {
       snakes: {
@@ -70,13 +70,13 @@ const initGame = function (playerNames) {
       boardSize: 16
     }
   }
-  const players = playerNames.map(createPlayer);
+  const players = gameStats.players.map(createPlayer);
   game['players'] = players;
   return game;
 };
 
 const main = function () {
-  const game = initGame(['john', 'hemant', 'kushal']);
+  const game = initGame({ players: ['john', 'hemant', 'kushal'] });
   console.log(startGame(game).name, 'won!');
   console.log(game);
 };
